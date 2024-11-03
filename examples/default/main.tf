@@ -5,10 +5,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.74"
     }
-    modtm = {
-      source  = "azure/modtm"
-      version = "~> 0.3"
-    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.5"
@@ -38,7 +34,7 @@ resource "random_integer" "region_index" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "~> 0.3"
+  version = "~> 0.4"
 }
 
 # This is required for resource modules
@@ -56,8 +52,17 @@ module "test" {
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
   # ...
   location            = azurerm_resource_group.this.location
-  name                = "TODO" # TODO update with module.naming.<RESOURCE_TYPE>.name_unique
+  name                = module.naming.firewall_policy.name_unique
   resource_group_name = azurerm_resource_group.this.name
+
+  managed_rules = {
+    managed_rule_set = {
+      owasp = {
+        version = "3.2"
+        type    = "OWASP"
+      }
+    }
+  }
 
   enable_telemetry = var.enable_telemetry # see variables.tf
 }
