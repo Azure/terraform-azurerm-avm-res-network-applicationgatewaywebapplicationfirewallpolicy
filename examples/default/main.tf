@@ -64,5 +64,15 @@ module "test" {
     }
   }
 
+  policy_settings = {
+    enabled                                   = false
+    file_upload_limit_in_mb                   = 100
+    js_challenge_cookie_expiration_in_minutes = 30
+    max_request_body_size_in_kb               = 128
+    mode                                      = "Detection"
+    request_body_check                        = true
+    request_body_inspect_limit_in_kb          = 128
+  }
+
   enable_telemetry = var.enable_telemetry # see variables.tf
 }
