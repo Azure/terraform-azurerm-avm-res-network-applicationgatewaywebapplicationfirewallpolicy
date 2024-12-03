@@ -1,6 +1,19 @@
-output "private_endpoints" {
-  description = <<DESCRIPTION
-  A map of the private endpoints created.
-  DESCRIPTION
-  value       = var.private_endpoints_manage_dns_zone_group ? azurerm_private_endpoint.this_managed_dns_zone_groups : azurerm_private_endpoint.this_unmanaged_dns_zone_groups
+output "http_listener_ids" {
+  description = "The ID of the HTTP Listener associated with the WAF Policy."
+  value       = azurerm_web_application_firewall_policy.this.http_listener_ids
+}
+
+output "name" {
+  description = "The name of the WAF Policy."
+  value       = azurerm_web_application_firewall_policy.this.name
+}
+
+output "path_based_rule_ids" {
+  description = "The ID of the Path Based Rule associated with the WAF Policy."
+  value       = azurerm_web_application_firewall_policy.this.path_based_rule_ids
+}
+
+output "resource_id" {
+  description = "The ID of the WAF Policy."
+  value       = azurerm_web_application_firewall_policy.this.id
 }
