@@ -171,6 +171,7 @@ variable "policy_settings" {
     max_request_body_size_in_kb               = optional(number)
     mode                                      = optional(string)
     request_body_check                        = optional(bool)
+    request_body_enforcement                  = optional(bool)
     request_body_inspect_limit_in_kb          = optional(number)
     log_scrubbing = optional(object({
       enabled = optional(bool)
@@ -190,6 +191,7 @@ variable "policy_settings" {
  - `max_request_body_size_in_kb` - (Optional) The Maximum Request Body Size in KB. Accepted values are in the range `8` to `2000`. Defaults to `128`.
  - `mode` - (Optional) Describes if it is in detection mode or prevention mode at the policy level. Valid values are `Detection` and `Prevention`. Defaults to `Prevention`.
  - `request_body_check` - (Optional) Is Request Body Inspection enabled? Defaults to `true`.
+ - `request_body_enforcement` - (Optional) Whether the firewall should block a request with body size greater then `max_request_body_size_in_kb`. Defaults to `true`.
  - `request_body_inspect_limit_in_kb` - (Optional) Specifies the maximum request body inspection limit in KB for the Web Application Firewall. Defaults to `128`.
 
  ---
@@ -199,9 +201,9 @@ variable "policy_settings" {
  ---
  `rule` block supports the following:
  - `enabled` - (Optional) Describes if the managed rule is in enabled state or disabled state. Defaults to `false`.
- - `match_variable` - 
- - `selector` - 
- - `selector_match_operator` - 
+ - `match_variable` -
+ - `selector` -
+ - `selector_match_operator` -
 DESCRIPTION
 }
 
