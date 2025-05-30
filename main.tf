@@ -107,6 +107,7 @@ resource "azurerm_web_application_firewall_policy" "this" {
       max_request_body_size_in_kb               = policy_settings.value.max_request_body_size_in_kb
       mode                                      = policy_settings.value.mode
       request_body_check                        = policy_settings.value.request_body_check
+      request_body_enforcement                  = policy_settings.value.request_body_enforcement
       request_body_inspect_limit_in_kb          = policy_settings.value.request_body_inspect_limit_in_kb
 
       dynamic "log_scrubbing" {

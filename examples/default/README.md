@@ -9,7 +9,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.74"
+      version = "~> 4.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -55,12 +55,10 @@ resource "azurerm_resource_group" "this" {
 # with a data source.
 module "test" {
   source = "../../"
+
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
   # ...
-  location            = azurerm_resource_group.this.location
-  name                = module.naming.firewall_policy.name_unique
-  resource_group_name = azurerm_resource_group.this.name
-
+  location = azurerm_resource_group.this.location
   managed_rules = {
     managed_rule_set = {
       owasp = {
@@ -69,7 +67,9 @@ module "test" {
       }
     }
   }
-
+  name                = module.naming.firewall_policy.name_unique
+  resource_group_name = azurerm_resource_group.this.name
+  enable_telemetry    = var.enable_telemetry # see variables.tf
   policy_settings = {
     enabled                                   = false
     file_upload_limit_in_mb                   = 100
@@ -79,8 +79,6 @@ module "test" {
     request_body_check                        = true
     request_body_inspect_limit_in_kb          = 128
   }
-
-  enable_telemetry = var.enable_telemetry # see variables.tf
 }
 ```
 
@@ -91,7 +89,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.2)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
