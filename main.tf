@@ -105,6 +105,7 @@ resource "azurerm_web_application_firewall_policy" "this" {
       file_upload_limit_in_mb                   = policy_settings.value.file_upload_limit_in_mb
       js_challenge_cookie_expiration_in_minutes = policy_settings.value.js_challenge_cookie_expiration_in_minutes
       max_request_body_size_in_kb               = policy_settings.value.max_request_body_size_in_kb
+      file_upload_enforcement                   = policy_settings.value.file_upload_enforcement
       mode                                      = policy_settings.value.mode
       request_body_check                        = policy_settings.value.request_body_check
       request_body_enforcement                  = policy_settings.value.request_body_enforcement

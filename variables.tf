@@ -169,6 +169,7 @@ variable "policy_settings" {
     file_upload_limit_in_mb                   = optional(number)
     js_challenge_cookie_expiration_in_minutes = optional(number)
     max_request_body_size_in_kb               = optional(number)
+    file_upload_enforcement                   = optional(bool)
     mode                                      = optional(string)
     request_body_check                        = optional(bool)
     request_body_enforcement                  = optional(bool)
@@ -189,6 +190,7 @@ variable "policy_settings" {
  - `file_upload_limit_in_mb` - (Optional) The File Upload Limit in MB. Accepted values are in the range `1` to `4000`. Defaults to `100`.
  - `js_challenge_cookie_expiration_in_minutes` - (Optional) Specifies the JavaScript challenge cookie validity lifetime in minutes. The user is challenged after the lifetime expires. Accepted values are in the range `5` to `1440`. Defaults to `30`.
  - `max_request_body_size_in_kb` - (Optional) The Maximum Request Body Size in KB. Accepted values are in the range `8` to `2000`. Defaults to `128`.
+ - `file_upload_enforcement` - (Optional) Whether the firewall should block a request with file upload size greater than `file_upload_limit_in_mb`. Defaults to `false`.
  - `mode` - (Optional) Describes if it is in detection mode or prevention mode at the policy level. Valid values are `Detection` and `Prevention`. Defaults to `Prevention`.
  - `request_body_check` - (Optional) Is Request Body Inspection enabled? Defaults to `true`.
  - `request_body_enforcement` - (Optional) Whether the firewall should block a request with body size greater then `max_request_body_size_in_kb`. Defaults to `true`.
