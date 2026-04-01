@@ -78,10 +78,9 @@ variable "name" {
   }
 }
 
-# This is required for most resource modules
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "The resource group where the resources will be deployed."
+  description = "The resource ID of the resource group in which to create the resource."
 }
 
 variable "custom_rules" {
@@ -241,18 +240,3 @@ variable "tags" {
   description = "(Optional) Tags of the resource."
 }
 
-variable "timeouts" {
-  type = object({
-    create = optional(string)
-    delete = optional(string)
-    read   = optional(string)
-    update = optional(string)
-  })
-  default     = null
-  description = <<DESCRIPTION
- - `create` - (Defaults to 30 minutes) Used when creating the Web Application Firewall Policy.
- - `delete` - (Defaults to 30 minutes) Used when deleting the Web Application Firewall Policy.
- - `read` - (Defaults to 5 minutes) Used when retrieving the Web Application Firewall Policy.
- - `update` - (Defaults to 30 minutes) Used when updating the Web Application Firewall Policy.
-DESCRIPTION
-}
