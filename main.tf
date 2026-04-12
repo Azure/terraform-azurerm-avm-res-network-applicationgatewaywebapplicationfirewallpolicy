@@ -1,5 +1,5 @@
 resource "azapi_resource" "this" {
-  type                      = "Microsoft.Network/applicationGatewayWebApplicationFirewallPolicies@2025-03-01"
+  type                      = "Microsoft.Network/applicationGatewayWebApplicationFirewallPolicies@2025-05-01"
   name                      = var.name
   parent_id                 = var.parent_id
   ignore_null_property      = true
