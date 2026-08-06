@@ -19,15 +19,33 @@ variable "managed_rules" {
         })))
       }))
     })))
+    exception = optional(map(object({
+      match_variable          = string
+      selector                = optional(string)
+      selector_match_operator = optional(string)
+      value_match_operator    = string
+      values                  = optional(list(string))
+      exception_managed_rule_sets = optional(list(object({
+        rule_set_type    = string
+        rule_set_version = string
+        rule_groups = optional(list(object({
+          rule_group_name = string
+          rules = optional(list(object({
+            rule_id = string
+          })))
+        })))
+      })))
+    })))
     managed_rule_set = map(object({
       type    = optional(string)
       version = string
       rule_group_override = optional(map(object({
         rule_group_name = string
         rule = optional(list(object({
-          action  = optional(string)
-          enabled = optional(bool)
-          id      = string
+          action      = optional(string)
+          enabled     = optional(bool)
+          id          = string
+          sensitivity = optional(string)
         })))
       })))
     }))
@@ -48,7 +66,22 @@ variable "managed_rules" {
  ---
  `rule_group` block supports the following:
  - `excluded_rules` - (Optional) One or more Rule IDs for exclusion.
- - `rule_group_name` - (Required) The name of rule group for exclusion. Possible values are `BadBots`, `crs_20_protocol_violations`, `crs_21_protocol_anomalies`, `crs_23_request_limits`, `crs_30_http_policy`, `crs_35_bad_robots`, `crs_40_generic_attacks`, `crs_41_sql_injection_attacks`, `crs_41_xss_attacks`, `crs_42_tight_security`, `crs_45_trojans`, `crs_49_inbound_blocking`, `General`, `GoodBots`, `KnownBadBots`, `Known-CVEs`, `REQUEST-911-METHOD-ENFORCEMENT`, `REQUEST-913-SCANNER-DETECTION`, `REQUEST-920-PROTOCOL-ENFORCEMENT`, `REQUEST-921-PROTOCOL-ATTACK`, `REQUEST-930-APPLICATION-ATTACK-LFI`, `REQUEST-931-APPLICATION-ATTACK-RFI`, `REQUEST-932-APPLICATION-ATTACK-RCE`, `REQUEST-933-APPLICATION-ATTACK-PHP`, `REQUEST-941-APPLICATION-ATTACK-XSS`, `REQUEST-942-APPLICATION-ATTACK-SQLI`, `REQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION`, `REQUEST-944-APPLICATION-ATTACK-JAVA`, `UnknownBots`, `METHOD-ENFORCEMENT`, `PROTOCOL-ENFORCEMENT`, `PROTOCOL-ATTACK`, `LFI`, `RFI`, `RCE`, `PHP`, `NODEJS`, `XSS`, `SQLI`, `FIX`, `JAVA`, `MS-ThreatIntel-WebShells`, `MS-ThreatIntel-AppSec`, `MS-ThreatIntel-SQLI` and `MS-ThreatIntel-CVEs`. `MS-ThreatIntel-AppSec`, `MS-ThreatIntel-SQLI` and `MS-ThreatIntel-CVEs`.
+ - `rule_group_name` - (Required) The name of rule group for exclusion.
+
+ ---
+ `exception` block supports the following:
+ - `match_variable` - (Required) The variable on which the exception condition is evaluated. Possible values are `RemoteAddr`, `RequestHeader` and `RequestURI`.
+ - `selector` - (Optional) When the match_variable points to a key-value pair (e.g., RequestHeader), this identifies the key.
+ - `selector_match_operator` - (Optional) Operates on the selector when match_variable points to a key-value pair. Possible values are `Contains`, `EndsWith`, `Equals` and `StartsWith`.
+ - `value_match_operator` - (Required) Operates on the allowed values for the match_variable. Possible values are `Contains`, `EndsWith`, `Equals`, `IPMatch` and `StartsWith`.
+ - `values` - (Optional) Allowed values for the match_variable.
+ - `exception_managed_rule_sets` - (Optional) The managed rule sets associated with the exception.
+
+ ---
+ `exception_managed_rule_sets` block supports the following:
+ - `rule_set_type` - (Required) The rule set type.
+ - `rule_set_version` - (Required) The rule set version.
+ - `rule_groups` - (Optional) The rule groups to apply.
 
  ---
  `managed_rule_set` block supports the following:
@@ -57,13 +90,14 @@ variable "managed_rules" {
 
  ---
  `rule_group_override` block supports the following:
- - `rule_group_name` - (Required) The name of the Rule Group. Possible values are `BadBots`, `crs_20_protocol_violations`, `crs_21_protocol_anomalies`, `crs_23_request_limits`, `crs_30_http_policy`, `crs_35_bad_robots`, `crs_40_generic_attacks`, `crs_41_sql_injection_attacks`, `crs_41_xss_attacks`, `crs_42_tight_security`, `crs_45_trojans`, `crs_49_inbound_blocking`, `General`, `GoodBots`, `KnownBadBots`, `Known-CVEs`, `REQUEST-911-METHOD-ENFORCEMENT`, `REQUEST-913-SCANNER-DETECTION`, `REQUEST-920-PROTOCOL-ENFORCEMENT`, `REQUEST-921-PROTOCOL-ATTACK`, `REQUEST-930-APPLICATION-ATTACK-LFI`, `REQUEST-931-APPLICATION-ATTACK-RFI`, `REQUEST-932-APPLICATION-ATTACK-RCE`, `REQUEST-933-APPLICATION-ATTACK-PHP`, `REQUEST-941-APPLICATION-ATTACK-XSS`, `REQUEST-942-APPLICATION-ATTACK-SQLI`, `REQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION`, `REQUEST-944-APPLICATION-ATTACK-JAVA`, `UnknownBots`, `METHOD-ENFORCEMENT`, `PROTOCOL-ENFORCEMENT`, `PROTOCOL-ATTACK`, `LFI`, `RFI`, `RCE`, `PHP`, `NODEJS`, `XSS`, `SQLI`, `FIX`, `JAVA`, `MS-ThreatIntel-WebShells`, `MS-ThreatIntel-AppSec`, `MS-ThreatIntel-SQLI` and `MS-ThreatIntel-CVEs`MS-ThreatIntel-WebShells`,.
+ - `rule_group_name` - (Required) The name of the Rule Group.
 
  ---
  `rule` block supports the following:
- - `action` - (Optional) Describes the override action to be applied when rule matches. Possible values are `Allow`, `AnomalyScoring`, `Block`, `JSChallenge` and `Log`. `JSChallenge` is only valid for rulesets of type `Microsoft_BotManagerRuleSet`.
+ - `action` - (Optional) Describes the override action to be applied when rule matches. Possible values are `Allow`, `AnomalyScoring`, `Block`, `CAPTCHA`, `JSChallenge` and `Log`. `JSChallenge` is only valid for rulesets of type `Microsoft_BotManagerRuleSet`.
  - `enabled` - (Optional) Describes if the managed rule is in enabled state or disabled state. Defaults to `false`.
  - `id` - (Required) Identifier for the managed rule.
+ - `sensitivity` - (Optional) Describes the override sensitivity to be applied when the rule matches. Possible values are `High`, `Low` and `Medium`.
 DESCRIPTION
   nullable    = false
 }
@@ -78,22 +112,25 @@ variable "name" {
   }
 }
 
-# This is required for most resource modules
-variable "resource_group_name" {
+variable "parent_id" {
   type        = string
-  description = "The resource group where the resources will be deployed."
+  description = "The resource ID of the resource group in which to create the resource."
 }
 
 variable "custom_rules" {
   type = map(object({
     action               = string
     enabled              = optional(bool)
-    group_rate_limit_by  = optional(string)
     name                 = optional(string)
     priority             = number
     rate_limit_duration  = optional(string)
     rate_limit_threshold = optional(number)
     rule_type            = string
+    group_by_user_session = optional(list(object({
+      group_by_variables = list(object({
+        variable_name = string
+      }))
+    })))
     match_conditions = map(object({
       match_values       = optional(list(string))
       negation_condition = optional(bool)
@@ -107,14 +144,21 @@ variable "custom_rules" {
   }))
   default     = null
   description = <<DESCRIPTION
- - `action` - (Required) Type of action. Possible values are `Allow`, `Block` and `Log`.
+ - `action` - (Required) Type of action. Possible values are `Allow`, `Block`, `CAPTCHA`, `JSChallenge` and `Log`.
  - `enabled` - (Optional) Describes if the policy is in enabled state or disabled state. Defaults to `true`.
- - `group_rate_limit_by` - (Optional) Specifies what grouping the rate limit will count requests by. Possible values are `GeoLocation`, `ClientAddr` and `None`.
  - `name` - (Optional) Gets name of the resource that is unique within a policy. This name can be used to access the resource.
  - `priority` - (Required) Describes priority of the rule. Rules with a lower value will be evaluated before rules with a higher value.
  - `rate_limit_duration` - (Optional) Specifies the duration at which the rate limit policy will be applied. Should be used with `RateLimitRule` rule type. Possible values are `FiveMins` and `OneMin`.
  - `rate_limit_threshold` - (Optional) Specifies the threshold value for the rate limit policy. Must be greater than or equal to 1 if provided.
  - `rule_type` - (Required) Describes the type of rule. Possible values are `MatchRule`, `RateLimitRule` and `Invalid`.
+
+ ---
+ `group_by_user_session` block supports the following:
+ - `group_by_variables` - (Required) List of group by clause variables.
+
+ ---
+ `group_by_variables` block supports the following:
+ - `variable_name` - (Required) The user session clause variable. Possible values are `ClientAddr`, `ClientAddrXFFHeader`, `GeoLocation`, `GeoLocationXFFHeader` and `None`.
 
  ---
  `match_conditions` block supports the following:
@@ -165,7 +209,11 @@ DESCRIPTION
 
 variable "policy_settings" {
   type = object({
+    captcha_cookie_expiration_in_minutes      = optional(number)
+    custom_block_response_body                = optional(string)
+    custom_block_response_status_code         = optional(number)
     enabled                                   = optional(bool)
+    file_upload_enforcement                   = optional(bool)
     file_upload_limit_in_mb                   = optional(number)
     js_challenge_cookie_expiration_in_minutes = optional(number)
     max_request_body_size_in_kb               = optional(number)
@@ -185,13 +233,17 @@ variable "policy_settings" {
   })
   default     = null
   description = <<DESCRIPTION
+ - `captcha_cookie_expiration_in_minutes` - (Optional) Specifies the CAPTCHA cookie validity lifetime in minutes. Accepted values are in the range `5` to `1440`. Defaults to `30`.
+ - `custom_block_response_body` - (Optional) If the action type is block, this field allows overriding the response body. The body must be specified in base64 encoding.
+ - `custom_block_response_status_code` - (Optional) If the action type is block, this field allows overriding the response status code.
  - `enabled` - (Optional) Describes if the policy is in enabled state or disabled state. Defaults to `true`.
+ - `file_upload_enforcement` - (Optional) Whether to allow WAF to enforce file upload limits. Defaults to `true`.
  - `file_upload_limit_in_mb` - (Optional) The File Upload Limit in MB. Accepted values are in the range `1` to `4000`. Defaults to `100`.
  - `js_challenge_cookie_expiration_in_minutes` - (Optional) Specifies the JavaScript challenge cookie validity lifetime in minutes. The user is challenged after the lifetime expires. Accepted values are in the range `5` to `1440`. Defaults to `30`.
  - `max_request_body_size_in_kb` - (Optional) The Maximum Request Body Size in KB. Accepted values are in the range `8` to `2000`. Defaults to `128`.
  - `mode` - (Optional) Describes if it is in detection mode or prevention mode at the policy level. Valid values are `Detection` and `Prevention`. Defaults to `Prevention`.
  - `request_body_check` - (Optional) Is Request Body Inspection enabled? Defaults to `true`.
- - `request_body_enforcement` - (Optional) Whether the firewall should block a request with body size greater then `max_request_body_size_in_kb`. Defaults to `true`.
+ - `request_body_enforcement` - (Optional) Whether the firewall should block a request with body size greater than `max_request_body_size_in_kb`. Defaults to `true`.
  - `request_body_inspect_limit_in_kb` - (Optional) Specifies the maximum request body inspection limit in KB for the Web Application Firewall. Defaults to `128`.
 
  ---
@@ -200,10 +252,10 @@ variable "policy_settings" {
 
  ---
  `rule` block supports the following:
- - `enabled` - (Optional) Describes if the managed rule is in enabled state or disabled state. Defaults to `false`.
- - `match_variable` -
- - `selector` -
- - `selector_match_operator` -
+ - `enabled` - (Optional) Whether the scrubbing rule is in enabled state or disabled state. Defaults to `true`.
+ - `match_variable` - (Required) The variable to be scrubbed from the logs. Possible values are `RequestArgNames`, `RequestCookieNames`, `RequestHeaderNames`, `RequestIPAddress`, `RequestJSONArgNames` and `RequestPostArgNames`.
+ - `selector` - (Optional) When match_variable is a collection, the operator used to specify which elements in the collection this rule applies to.
+ - `selector_match_operator` - (Optional) Describes operator to be matched. Possible values are `Equals` and `EqualsAny`.
 DESCRIPTION
 }
 
@@ -241,18 +293,3 @@ variable "tags" {
   description = "(Optional) Tags of the resource."
 }
 
-variable "timeouts" {
-  type = object({
-    create = optional(string)
-    delete = optional(string)
-    read   = optional(string)
-    update = optional(string)
-  })
-  default     = null
-  description = <<DESCRIPTION
- - `create` - (Defaults to 30 minutes) Used when creating the Web Application Firewall Policy.
- - `delete` - (Defaults to 30 minutes) Used when deleting the Web Application Firewall Policy.
- - `read` - (Defaults to 5 minutes) Used when retrieving the Web Application Firewall Policy.
- - `update` - (Defaults to 30 minutes) Used when updating the Web Application Firewall Policy.
-DESCRIPTION
-}
