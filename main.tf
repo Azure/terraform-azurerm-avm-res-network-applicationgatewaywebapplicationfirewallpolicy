@@ -63,6 +63,7 @@ resource "azurerm_web_application_firewall_policy" "this" {
       }
     }
   }
+
   dynamic "custom_rules" {
     for_each = var.custom_rules == null ? {} : var.custom_rules
 
@@ -97,6 +98,7 @@ resource "azurerm_web_application_firewall_policy" "this" {
       }
     }
   }
+
   dynamic "policy_settings" {
     for_each = var.policy_settings == null ? [] : [var.policy_settings]
 
@@ -130,6 +132,7 @@ resource "azurerm_web_application_firewall_policy" "this" {
       }
     }
   }
+
   dynamic "timeouts" {
     for_each = var.timeouts == null ? [] : [var.timeouts]
 
