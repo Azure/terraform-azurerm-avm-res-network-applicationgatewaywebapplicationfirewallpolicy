@@ -30,7 +30,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "~> 0.1"
 
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
 }
 
 # This allows us to randomize the region for the resource group.
@@ -73,7 +73,7 @@ module "test" {
   }
   name                = module.naming.firewall_policy.name_unique
   resource_group_name = azurerm_resource_group.this.name
-  enable_telemetry    = false # see variables.tf
+  enable_telemetry    = var.enable_telemetry # see variables.tf
   policy_settings = {
     enabled                                   = false
     file_upload_limit_in_mb                   = 100
@@ -121,7 +121,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
